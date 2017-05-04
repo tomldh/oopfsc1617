@@ -141,7 +141,7 @@ void Matrix::print() const
     {
         std::cout << std::setprecision(3);
         for (int j = 0; j < numCols; ++j)
-            std::cout << std::setw(5) << entries[j][i] << " ";
+            std::cout << std::setw(5) << entries[i][j] << " ";
         std::cout << std::endl;
     }
     std::cout << std::endl;
@@ -172,10 +172,10 @@ std::vector<double> operator*(const Matrix& a,
         exit(EXIT_FAILURE);
     }
     std::vector<double> y(a.rows());
-    for (int i = 0; i <= a.rows(); ++i)
+    for (int i = 0; i < a.rows(); ++i)
     {
         y[i] = 0.;
-        for (int j = 0; j <= a.cols(); ++j)
+        for (int j = 0; j < a.cols(); ++j)
             y[i] += a[i][j] * x[j];
     }
     return y;

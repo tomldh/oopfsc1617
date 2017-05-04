@@ -37,7 +37,7 @@ class Matrix
     
     Matrix(int numRows_, int numCols_, double value)
     {
-        resize(value,numRows,numCols);
+        resize(numRows_,numCols_,value);
     };
     
     Matrix(std::vector<std::vector<double> > a)
@@ -52,6 +52,7 @@ class Matrix
     
     Matrix(const Matrix& b)
     {
+    	entries = b.entries;
         numRows = b.numRows;
         numCols = b.numCols;
     }

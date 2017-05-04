@@ -1,0 +1,149 @@
+Exercise 01
+===========
+git init: This command creates an empty Git repository
+git add readme: This command updates the index using the current content found in the working tree, to prepare the content staged for the next commit.
+git commit -m "commit_message": Stores the current contents of the index in a new commit along with a log message from the user describing the changes.
+git log: Shows the commit logs
+git status: Displays paths that have differences between the index file and the current HEAD commit, paths that have differences between the working tree and the index file, and paths in the working tree that are not tracked by Git
+git reset --hard HEAD~: Resets the index and working tree. Any changes to tracked files in the working tree since <commit> are discarded
+	-> or git reset HEAD~, then git checkout readme
+git stash: the command saves your local modifications away and reverts the working directory to match the HEAD commit.
+git clone: Clones a repository into a newly created directory, creates remote-tracking branches for each branch in the cloned repositor
+git pull: Incorporates changes from a remote repository into the current branch
+git diff: Show changes between the working tree and the index or a tree, changes between the index and a tree, changes between two trees, changes between two blob objects, or changes between two files on disk.
+
+
+Exercise 02
+===========
+A. Bugs found by gdb debugging
+1) (gdb)run
+
+2) output:
+	(0x0) matrix:
+
+(0x0) matrix:
+
+(0x0) matrix:
+
+(0x0) matrix:
+
+(0x0) matrix:
+
+Illegal row index 1 valid range is [0:-1]
+[Inferior 1 (process 4979) exited with code 01]
+
+3) The error is illegal row index. With output from printing matrix, (0x0) implies that the matrix has 0 rows and 0 columns. Thus, #6-15 need to be inspected for the reason of (0x0) matrix. As only #6 and #11 is related to setting the size of matrix. The corresponding constructor are checked. A comparison shows that in matrix_broken.h::#40, the arguments passed into "resize(...)" do not have the right order and the argument names are wrong. The right code should be "resize(numRows_,numCols_,value);". 
+
+4)output:
+(4x6) matrix:
+
+Program received signal SIGSEGV, Segmentation fault.
+Matrix::print (this=this@entry=0x7fffffffdd00) at matrix_broken.cc:144
+144	            std::cout << std::setw(5) << entries[j][i] << " ";
+
+5) A segmentation fault occurs, thus there is an illegal access to matrix location entries[j][i]. As j corresp. to column index and i corresp. to row index, the correct indexing to entries should be "entries[i][j]".
+
+6) Outuput:
+Starting program: /home/fighterlin/uniHeidelberg/oopfsc1617/sheet02/testmatrix 
+(4x6) matrix:
+    2    -1     0     0     0     0 
+   -1     2    -1     0     0     0 
+    0    -1     2    -1     0     0 
+    0     0    -1     2     0     0 
+
+(6x4) matrix:
+    2    -1     0     0 
+   -1     2    -1     0 
+    0    -1     2    -1 
+    0     0    -1     2 
+    0     0     0     0 
+    0     0     0     0 
+
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040133e in std::vector<double, std::allocator<double> >::operator[] (__n=0, this=<optimised out>) at /usr/include/c++/5/bits/stl_vector.h:780
+780	      { return *(this->_M_impl._M_start + __n); }
+
+7) A segmentation fault occurs, thus it is likely to be an illegal memory access of matrix element. But the output does not indicate specific line in the matrix source files. Thus
+
+8)(gdb): backtrace
+
+9) Output:
+#0  0x000000000040133e in std::vector<double, std::allocator<double> >::operator[] (__n=0, this=<optimised out>) at /usr/include/c++/5/bits/stl_vector.h:780
+#1  Matrix::operator*= (this=this@entry=0x7fffffffdd60, x=x@entry=2) at matrix_broken.cc:94
+#2  0x00000000004016ee in operator* (x=x@entry=2, a=...) at matrix_broken.cc:160
+#3  0x00000000004026ce in main () at testmatrix.cc:20
+
+10) The trace#3 shows that the program fails when executing testmatrix.cc:20. As testmatrix.cc:18 (B.print()) is executed successfully, thus the error is likely to happen between testmatrix.cc:19-20. The trace#2 and #1 indicates the source error might come from operator function : "Matrix& Matrix::operator*=(double x)"  . However, an inspection of the implementation tells the function is correct. As mentioned above, error might occur in testmatrix.cc:19, thus the constructor in matrix_broken.h:53 is checked. It is found that the elements of the entries from matrix b is not copied. "entries = b.entries;" is added.
+
+11)Output:
+Starting program: /home/fighterlin/uniHeidelberg/oopfsc1617/sheet02/testmatrix 
+(4x6) matrix:
+    2    -1     0     0     0     0 
+   -1     2    -1     0     0     0 
+    0    -1     2    -1     0     0 
+    0     0    -1     2     0     0 
+
+(6x4) matrix:
+    2    -1     0     0 
+   -1     2    -1     0 
+    0    -1     2    -1 
+    0     0    -1     2 
+    0     0     0     0 
+    0     0     0     0 
+
+(4x6) matrix:
+    4    -2     0     0     0     0 
+   -2     4    -2     0     0     0 
+    0    -2     4    -2     0     0 
+    0     0    -2     4     0     0 
+
+(4x6) matrix:
+    4    -2     0     0     0     0 
+   -2     4    -2     0     0     0 
+    0    -2     4    -2     0     0 
+    0     0    -2     4     0     0 
+
+(4x6) matrix:
+    6    -3     0     0     0     0 
+   -3     6    -3     0     0     0 
+    0    -3     6    -3     0     0 
+    0     0    -3     6     0     0 
+
+Element 1,1 of D is 6
+
+Illegal row index 5 valid range is [0:4]
+[Inferior 1 (process 7138) exited with code 01]
+
+12)(gdb)backtrace
+
+13) output:
+no stack.
+
+14) As the gdb cannot identify it, thus by inspecting the matrix_broken.cc, it is found that "Illegal row index 5 valid ..." occurs in functions "double& Matrix::operator()(int i, int j)" and "double Matrix::operator()(int i, int j) const" and "std::vector<double>& Matrix::operator[](int i)" and "const std::vector<double>& Matrix::operator[](int i) const". As testmatrix.cc:39 involves operation *, thus an inpection of the function at matrix_broken.cc:164 is conducted. It is found out that the stopping condition in the for-loops is wrong. Thus "i<=a.rows()" and "j<=cols()" should be changed to "i<a.rows()" and "j<cols()".
+
+15) The program executes normally and exits.
+
+
+B. Another Bug
+1)>> diff matrix_broken.h matrix.h
+2)Output:
+
+29c29
+<             entries(numRows_), numRows(numRows), numCols(numCols_)
+---
+>             entries(numRows_), numRows(numRows_), numCols(numCols_)
+
+
+3) The constructor in matrix_broken.h:28 has errors. The wrong argument is used as an initializer.
+4) A test case as follows would print a matrix of undesired size (0x6).
+	Matrix E(4,6);
+	E.print();
+
+C. What kind of bug are they unable to detect?
+The specific choice of test matrix may not cover all the functions implemented. Thus bugs hidden in unused/untested funcctions will remain. 
+Logic error cannot be detected as the result in the test is not validated with ground truth results.
+
+
+
+
