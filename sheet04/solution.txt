@@ -1,0 +1,20 @@
+Exercise 4:
+
+
+int foo ( const int& );
+int bar ( int& );
+
+int main()
+{
+	int i = 0; //ok
+	int& j = i; //ok
+	static const int f = i; //ok
+	int* const p = 0; //ok
+	p = &i; //not allowed, because p is a constant pointer, the address held by p cannot be changed.
+	*p = f; //allowed, but undefined result. Program might crash.
+	const int& l = j; //ok
+	const int& k = f; //ok
+	foo ( j ); //ok
+	bar ( l ); //not allowed, cannot bind a plain reference to l (reference to const)
+	foo ( k ); //ok
+}
