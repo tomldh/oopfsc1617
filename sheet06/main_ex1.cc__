@@ -1,0 +1,56 @@
+#include <iostream>
+#include <string>
+#include <exception>
+
+class my_exception : public std::exception
+{
+public:
+	my_exception(std::string msg_)
+	{
+		msg = msg_;
+	}
+	~my_exception() throw()
+	{
+
+	}
+
+	const char* what() const throw()
+	{
+		return msg.c_str();
+	}
+
+private:
+	std::string msg;
+};
+
+//class Foo throws in the destructor
+class Foo
+{
+public:
+	~Foo ()
+	{
+		throw my_exception("Foo exception");
+	}
+};
+
+class Bar
+{
+public:
+	Bar ()
+	{
+		throw my_exception("Bar exception");
+	}
+};
+
+int main()
+{
+	try
+	{
+		Foo f;
+		Bar b;
+	}
+	catch (const std::exception & e)
+	{
+		std::cout << "ERROR: ";// << e.what() << std::endl;
+	}
+}
