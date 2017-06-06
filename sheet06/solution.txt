@@ -1,0 +1,11 @@
+Exercise 1: Exceptions and Destructors
+
+Observation: The program is terminated with an error after throwing "Foo exception".
+
+Cause: As the instance of exception is created in the destructor and the destructor frees the memory for the object memory where the exception instance was created, the exception instance no longer exists when the control is handed over to the catch block. Thus calling the what() of the exception object gives rise to error.
+
+Exercise 2: Exceptions and Sanity Checks
+
+
+
+
