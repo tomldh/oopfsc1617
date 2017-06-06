@@ -1,9 +1,16 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-#include "NumVector.hh"
 
-//#define COMPILE
+#define COMPILE
+//#define USE_INHERIT
+
+#ifdef USE_INHERIT
+#include "NumVectorInherit.hh"
+#else
+#include "NumVector.hh"
+#endif
+
 
 #ifndef COMPILE
 
