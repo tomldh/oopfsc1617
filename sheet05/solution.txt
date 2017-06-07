@@ -5,13 +5,13 @@ Exercise 3 Inheritance and Functions
 class A
 {
   public:
-    void foo() const { std::cout << "A::foo" << std::endl;}
+    void foo() const { std::cout << "A::foo" << std::endl; }
 };
 
 class B : public A
 {
   public:
-    void foo() { std::cout << "B::foo" << std::endl;}
+    void foo() { std::cout << "B::foo" << std::endl; }
 };
 
 class C : private B
@@ -25,12 +25,10 @@ void test(const A& a) { a.foo(); }
 int main() {
   
   A a; B b; C c;
-  a.foo(); //output: A::foo
-  b.foo(); //output: B::foo
-  test(b); //output: A::foo
-  c.bar(); //output: B::foo
-  test(c); //error. Due to private inheritance, foo() becomes private in class C and thus not accessible.
-  
-  
-  return 0;
+  a.foo(); //output: A::foo. a is of class A, thus calls method foo() of A.
+  b.foo(); //output: B::foo. b is of class B, thus calls method foo() of B.
+  test(b); //output: A::foo. Calls method foo() of the A part of b.
+  c.bar(); //output: B::foo. C inherits from B, thus bar() calls method foo() of B.
+  test(c); //error. Due to C's private inheritance from B, foo() becomes private in class C and thus not accessible.
+
 }
