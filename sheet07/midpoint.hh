@@ -1,4 +1,5 @@
 #include "functor.hh"
+#include <stdlib.h>
 
 double MidpointRule(Functor& f, double a = 0., double b = 1., size_t n = 1000)
 {
