@@ -5,10 +5,16 @@
 class Functor
 {
 public:
-	virtual double operator () (double t) = 0;
-	virtual void integrationInterval(double& l, double& r) = 0; // FIXME: should this go to inheritance of a specific function instead?
-	virtual double exactIntegral() const = 0;
+	virtual double operator () (double t) const = 0;
+	virtual double operator [] (double t) const = 0;
 	virtual ~Functor () {}
+};
+
+class TestFunctor
+{
+public :
+	virtual void integrationInterval(double& l, double& r) const = 0;
+	virtual double exactIntegral() const = 0;
 };
 
 

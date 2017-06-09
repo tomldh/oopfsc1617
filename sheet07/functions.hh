@@ -11,89 +11,140 @@
 #include "functor.hh"
 #include <cmath>
 
-// realization of function a * x^2 + b
+// realization of function a * x^2 + b * x + c
 class Quadratic : public Functor
 {
 public:
-	Quadratic (double a_, double b_) : a(a_), b(b_), lb(0.0), ub(0.0) {}
+	Quadratic (double a_, double b_, double c_) : a(a_), b(b_), c(c_) {}
 
-	double operator () (double t) override
+	double operator () (double t) const override
 	{
-		return (a * t * t + b);
+		return (a * t * t + b * t + c);
 	}
 
-	void integrationInterval(double& l, double& r)override
+	double operator [] (double t) const override
 	{
-		lb = l;
-		ub = r;
+		// a * x ^ 3 / 3 + b * x ^ 2 / 2 + c * x
+
+		return (a * pow(t, 3) / 3 + b * pow(t, 2) / 2 + c * t);
 	}
 
-	double exactIntegral() const override
-	{
-		// a * x ^ 3 / 3 + b * x
-		return (a * pow((ub - lb), 3) / 3 + b * (ub - lb));
-	}
-
-
-private:
-	double a, b;
-	double lb, ub; // lower bound, upper bound
+protected:
+	double a, b, c; // coefficients
 
 };
 
-// realization of function sin(a * x + b)
-class Sine : public Functor
+// realization of function (a * t + b) / PI * sin(a * t + b)
+class XPiSine : public Functor
 {
 public:
-	Sine (double a_, double b_) : a(a_), b(b_) , lb(0.0), ub(0.0){}
+	XPiSine (double a_, double b_, double c_) : a(a_), b(b_), c(c_) {}
+
+	double operator () (double t) const override
+	{
+		double x = a * t * t + b * t + c;
+
+		return (x) / M_PI * sin(x);
+	}
+
+	double operator [] (double t) const override
+	{
+		double x = a * t * t + b * t + c;
+
+		//return (-x * cos(x) + sin(x)) / M_PI;;
+
+		return (t);
+	}
+
+private:
+	double a, b, c;
+};
+
+/*
+class TestFunction : public XPiSine, public Quadratic
+{
+public:
+	TestFunction(double a_, double b_, double c_, double lb_, double ub_)
+		: XPiSine(a_, b_, c_), Quadratic(a_, b_, c_), lb(lb_), ub(ub_) {}
+
 
 	double operator () (double t) override
 	{
-		return sin(a * t + b);
+		return -1.0;
 	}
 
-	void integrationInterval(double& l, double& r) override
+	double operator [] (double t) override
 	{
-		lb = l;
-		ub = r;
+		return -1.0;
 	}
 
-	double exactIntegral() const override
+
+	void integrationInterval(double& l, double& r) const
 	{
+		l = lb;
+		r = ub;
+	}
+
+	double exactIntegral() const
+	{
+		//return ((*this)[ub] - (*this)[lb]);
 		return 0.0;
 	}
 
 private:
-	double a, b;
-	double lb, ub; // lower bound, upper bound
+	double lb, ub;
 };
 
-// realization of function t / PI * sin(a * x + b)
-//FIXME: inherit from Sine?
-class XSine : public Functor
+*/
+
+
+class TestXPiSine : public XPiSine, public TestFunctor
 {
+
 public:
-	XSine (double a_, double b_) : a(a_), b(b_), lb(0.0), ub(0.0) {}
+	TestXPiSine(double a_, double b_, double c_, double lb_, double ub_) : XPiSine(a_, b_, c_), lb(lb_), ub(ub_) {}
 
-	double operator () (double t) override
+	void integrationInterval(double& l, double& r) const override
 	{
-		return t / M_PI * sin(a * t + b);
-	}
-
-	void integrationInterval(double& l, double& r) override
-	{
-		lb = l;
-		ub = r;
+		l = lb;
+		r = ub;
 	}
 
 	double exactIntegral() const override
 	{
-		return 0.0;
+		// -x * cos(x) + sin(x)
+		return (XPiSine::operator[](ub) - XPiSine::operator[](lb));
+
+		//return 0.0;
 	}
 
 private:
-	double a, b;
-	double lb, ub; // lower bound, upper bound
+	double lb, ub;
+};
+
+
+class TestQuadratic : public Quadratic, public TestFunctor
+{
+public:
+	TestQuadratic (double a_, double b_, double c_, double lb_, double ub_) : Quadratic(a_, b_, c_), lb(lb_), ub(ub_) {}
+
+	void integrationInterval(double& l, double& r) const override
+	{
+		l = lb;
+		r = ub;
+	}
+
+	double exactIntegral() const override
+	{
+		// a * x ^ 3 / 3 + b * x ^ 2 / 2 + c * x
+		double diff = ub - lb;
+
+		return (a * pow(diff, 3) / 3 + b * pow(diff, 2) / 2 + c * diff);
+	}
+
+private:
+	double lb, ub;
+
 };
 
 
