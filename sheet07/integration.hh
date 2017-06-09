@@ -10,11 +10,12 @@
 
 #include "integrator.hh"
 #include "functor.hh"
+#include <stdlib.h>
 
 class Integration
 {
 public:
-	virtual double operator () (Integrator &integrator_, Functor &f, double lowerlimit=0.0, double upperlimit=0.0) = 0;
+	virtual double operator () (Integrator &integrator_, Functor &f, size_t numIntervals, double lowerlimit=0.0, double upperlimit=0.0) = 0;
 	virtual ~Integration() {}
 };
 

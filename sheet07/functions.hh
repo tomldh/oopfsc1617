@@ -49,6 +49,8 @@ public:
 
 	double operator [] (double t) const override
 	{
+
+		// -x * cos(x) + sin(x)
 		double x = a * t * t + b * t + c;
 
 		//return (-x * cos(x) + sin(x)) / M_PI;;
@@ -112,10 +114,7 @@ public:
 
 	double exactIntegral() const override
 	{
-		// -x * cos(x) + sin(x)
 		return (XPiSine::operator[](ub) - XPiSine::operator[](lb));
-
-		//return 0.0;
 	}
 
 private:
@@ -136,10 +135,7 @@ public:
 
 	double exactIntegral() const override
 	{
-		// a * x ^ 3 / 3 + b * x ^ 2 / 2 + c * x
-		double diff = ub - lb;
-
-		return (a * pow(diff, 3) / 3 + b * pow(diff, 2) / 2 + c * diff);
+		return (Quadratic::operator[](ub) - Quadratic::operator[](lb));
 	}
 
 private:

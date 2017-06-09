@@ -35,6 +35,15 @@ public:
 		return result;
 	}
 
+	void setBounds(const double &l, const double &r)
+	{
+
+	}
+	void setNumOfIntervals(const size_t &n)
+	{
+
+	}
+
 private:
 	double A, B; //lower bound, upper bound
 	size_t N; //n subintervals

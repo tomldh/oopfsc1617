@@ -32,6 +32,17 @@ public:
 		return result;
 	}
 
+	void setBounds(const double &l, const double &r) override
+	{
+		A = l;
+		B = r;
+	}
+
+	void setNumOfIntervals(const size_t &n) override
+	{
+		N = n;
+	}
+
 private:
 	double A, B; //lower bound, upper bound
 	size_t N; //number of sub-intervals

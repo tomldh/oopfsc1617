@@ -10,7 +10,7 @@
 
 #include "integration.hh"
 #include "functions.hh"
-#include <stdlib.h>
+
 #include <iostream>
 #include <string>
 
@@ -19,50 +19,42 @@ class EquidistantIntegration : public Integration
 public:
 	EquidistantIntegration() {}
 
-	double operator() (Integrator &integrator, Functor &f, double lowerlimit=0.0, double upperlimit=0.0) override
+	double operator() (Integrator &integrator, Functor &f, size_t numIntervals, double lowerlimit=0.0, double upperlimit=0.0) override
 	{
 
 		TestFunctor* tf = dynamic_cast<TestFunctor*> (&f);
 
+		// Testing function
 		if (tf != nullptr)
 		{
 			(*tf).integrationInterval(lowerlimit, upperlimit);
 			std::cout << "Lower limit is " << lowerlimit << ", Upper limit is " << upperlimit << std::endl;
 		}
-		else
-		{
-			if (lowerlimit == upperlimit)
-			{
-				std::cout << "Error: no interval defined." << std::endl;
-				exit(0);
-			}
-			else
-			{
-				std::cout << "Lower limit is " << lowerlimit << ", Upper limit is " << upperlimit << std::endl;
-			}
 
+		if (lowerlimit > upperlimit)
+		{
+			std::cout << "Error: no valid interval defined for integration!" << std::endl;
 		}
 
-		double df = f(1);
-		//double dtf = (*tf)[1];
+		integrator.setBounds(lowerlimit, upperlimit);
+		integrator.setNumOfIntervals(numIntervals);
 
-		std::cout << "f() = " << df << std::endl;
-		//std::cout << "f[] = " << dtf << std::endl;
+		return integrator(f);
 
 		/*
-		double h = (upperlimit - lowerlimit) / N;
+		double h = (upperlimit - lowerlimit) / N; // length of sub-interval
 
 		for (size_t i = 0; i < (N-1); i++)
 		{
 			// for each interval, call rules to perform integration
 			// the a = lowerlimit + i * h, b = lowerlimit + (i+1)h, N = 1 by default
 
-
 		}
-		*/
+
 		double result = 0.0;
 
 		return result;
+		*/
 	}
 };
 

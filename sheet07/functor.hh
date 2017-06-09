@@ -15,6 +15,7 @@ class TestFunctor
 public :
 	virtual void integrationInterval(double& l, double& r) const = 0;
 	virtual double exactIntegral() const = 0;
+	virtual ~TestFunctor() {}
 };
 
 
