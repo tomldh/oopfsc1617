@@ -15,7 +15,7 @@
 class Integration
 {
 public:
-	virtual double operator () (Integrator &integrator_, Functor &f, size_t numIntervals, double lowerlimit=0.0, double upperlimit=0.0) = 0;
+	virtual double operator () (Functor &f, Integrator &integrator_, size_t numIntervals, double lowerlimit=0.0, double upperlimit=0.0) = 0;
 	virtual ~Integration() {}
 };
 

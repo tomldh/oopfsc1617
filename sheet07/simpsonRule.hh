@@ -15,38 +15,32 @@ class SimpsonRule : public Integrator
 {
 
 public:
-	SimpsonRule (double A_, double B_, size_t N_) : A(A_), B(B_), N(N_) {}
+	SimpsonRule () : a(0.0), b(0.0) {}
+	SimpsonRule (double a_, double b_) : a(a_), b(b_) {}
 
 	double operator () (Functor &f) override
 	{
-		double dt = (B - A) / N; // sub-interval length
-
-		double result = 0.0;
-
-		for (size_t i = 0; i < N-1; i++)
-		{
-			double a = A + dt * i;
-			double b = A + dt * (i+1);
-
-			result += ((f(a) + 4 * f(a/2 + b/2) + f(b)) * dt / 6);
-
-		}
-
-		return result;
+		return ((f(a) + 4 * f(a/2 + b/2) + f(b)) * (b - a) / 6);
 	}
 
-	void setBounds(const double &l, const double &r)
+	void setBounds(const double &l, const double &r) override
 	{
-
+		a = l;
+		b = r;
 	}
-	void setNumOfIntervals(const size_t &n)
-	{
 
+	size_t orderOfConvergence() const override
+	{
+		return 4;
+	}
+
+	size_t maxDegree() const override
+	{
+		return 2;
 	}
 
 private:
-	double A, B; //lower bound, upper bound
-	size_t N; //n subintervals
+	double a, b; //lower bound, upper bound
 
 };
 

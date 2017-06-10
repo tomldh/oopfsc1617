@@ -10,7 +10,8 @@ class Integrator
 public:
 	virtual double operator () (Functor &f) = 0;
 	virtual void setBounds(const double &l, const double &r) = 0;
-	virtual void setNumOfIntervals(const size_t &n) = 0;
+	virtual size_t orderOfConvergence() const = 0;
+	virtual size_t maxDegree() const  = 0;
 	virtual ~Integrator() {}
 };
 

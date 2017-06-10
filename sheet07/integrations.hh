@@ -19,7 +19,7 @@ class EquidistantIntegration : public Integration
 public:
 	EquidistantIntegration() {}
 
-	double operator() (Integrator &integrator, Functor &f, size_t numIntervals, double lowerlimit=0.0, double upperlimit=0.0) override
+	double operator() (Functor &f, Integrator &integrator, size_t numIntervals, double lowerlimit=0.0, double upperlimit=0.0) override
 	{
 
 		TestFunctor* tf = dynamic_cast<TestFunctor*> (&f);
@@ -36,28 +36,53 @@ public:
 			std::cout << "Error: no valid interval defined for integration!" << std::endl;
 		}
 
-		integrator.setBounds(lowerlimit, upperlimit);
-		integrator.setNumOfIntervals(numIntervals);
+		double result = 0.0;
 
-		return integrator(f);
+		double dt = (upperlimit - lowerlimit) / numIntervals; // length of sub-interval
 
-		/*
-		double h = (upperlimit - lowerlimit) / N; // length of sub-interval
-
-		for (size_t i = 0; i < (N-1); i++)
+		for (size_t i = 0; i < numIntervals; i++)
 		{
-			// for each interval, call rules to perform integration
-			// the a = lowerlimit + i * h, b = lowerlimit + (i+1)h, N = 1 by default
+			// for each interval, call rule to perform integration
+
+			double a = lowerlimit + dt * i;
+			double b = lowerlimit + dt * (i+1);
+
+			integrator.setBounds(a, b);
+
+			result += integrator(f);
 
 		}
 
-		double result = 0.0;
-
 		return result;
-		*/
+
 	}
 };
 
+class AdaptiveIntegration : public Integration
+{
+public:
+	AdaptiveIntegration () {}
+
+	double operator() (Functor &f, Integrator &integrator, size_t numIntervals, double lowerlimit=0.0, double upperlimit=0.0) override
+	{
+		TestFunctor* tf = dynamic_cast<TestFunctor*> (&f);
+
+		// Testing function
+		if (tf != nullptr)
+		{
+			(*tf).integrationInterval(lowerlimit, upperlimit);
+			std::cout << "Lower limit is " << lowerlimit << ", Upper limit is " << upperlimit << std::endl;
+		}
+
+		if (lowerlimit > upperlimit)
+		{
+			std::cout << "Error: no valid interval defined for integration!" << std::endl;
+		}
+
+		return 0.0;
+
+	}
+};
 
 
 #endif /* INTEGRATIONS_HH_ */

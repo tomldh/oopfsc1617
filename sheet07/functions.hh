@@ -51,11 +51,8 @@ public:
 	{
 
 		// -x * cos(x) + sin(x)
-		double x = a * t * t + b * t + c;
+		return (-t * cos(t) + sin(t)) / M_PI;;
 
-		//return (-x * cos(x) + sin(x)) / M_PI;;
-
-		return (t);
 	}
 
 private:
