@@ -3,90 +3,8 @@
 #include<iostream>
 #include<cstdlib>
 
-void Matrix::resize(int numRows_, int numCols_)
-{
-    entries.resize(numRows_);
-    for (size_t i = 0; i < entries.size(); ++i)
-        entries[i].resize(numCols_);
-    numRows = numRows_;
-    numCols = numCols_;
-}
 
-void Matrix::resize(int numRows_, int numCols_, double value)
-{
-    entries.resize(numRows_);
-    for (size_t i = 0; i < entries.size(); ++i)
-    {
-        entries[i].resize(numCols_);
-        for (size_t j = 0; j < entries[i].size(); ++j)
-            entries[i][j] = value;
-    }
-    numRows = numRows_;
-    numCols = numCols_;
-}
-
-double& Matrix::operator()(int i, int j)
-{
-    if (i < 0 || i >= numRows)
-    {
-        std::cerr << "Illegal row index " << i;
-        std::cerr << " valid range is [0:" << numRows-1 << "]";
-        std::cerr << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    if (j < 0 || j >= numCols)
-    {
-        std::cerr << "Illegal column index " << j;
-        std::cerr << " valid range is [0:" << numCols-1 << "]";
-        std::cerr << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return entries[i][j];
-}
-
-double Matrix::operator()(int i, int j) const
-{
-    if ( i < 0 || i >= numRows)
-    {
-        std::cerr << "Illegal row index " << i;
-        std::cerr << " valid range is [0:" << numRows-1 << "]";
-        std::cerr << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    if (j < 0 || j >= numCols)
-    {
-        std::cerr << "Illegal column index " << j;
-        std::cerr << " valid range is [0:" << numCols-1 << "]";
-        std::cerr << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return entries[i][j];
-}
-
-std::vector<double>& Matrix::operator[](int i)
-{
-    if (i < 0 || i >= numRows)
-    {
-        std::cerr << "Illegal row index " << i;
-        std::cerr << " valid range is [0:" << numRows-1 << "]";
-        std::cerr << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return entries[i];
-}
-
-const std::vector<double>& Matrix::operator[](int i) const
-{
-    if (i < 0 || i >= numRows)
-    {
-        std::cerr << "Illegal row index " << i;
-        std::cerr << " valid range is [0:" << numRows-1 << "]";
-        std::cerr << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return entries[i];
-}
-
+/*
 Matrix& Matrix::operator*=(double x)
 {
     for (int i = 0; i < numRows; ++i)
@@ -132,21 +50,9 @@ std::vector<double> Matrix::solve(std::vector<double> b) const
     }
     return(x);    
 }
+*/
 
-void Matrix::print() const
-{
-    std::cout << "(" << numRows << "x";
-    std::cout << numCols << ") matrix:" << std::endl;
-    for (int i = 0; i < numRows; ++i)
-    {
-        std::cout << std::setprecision(3);
-        for (int j = 0; j < numCols; ++j)
-            std::cout << std::setw(5) << entries[i][j] << " ";
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
-
+/*
 Matrix operator*(const Matrix& a, double x)
 {
     Matrix output(a);
@@ -187,4 +93,4 @@ Matrix operator+(const Matrix& a, const Matrix& b)
     output += b;
     return output;
 }
-
+*/
