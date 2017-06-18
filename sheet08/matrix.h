@@ -16,7 +16,8 @@ class Matrix
     const std::vector<T>& operator[](int i) const;
 
     // arithmetic functions
-    Matrix<T>& operator*=(double x);
+    template<typename T2>
+    Matrix<T>& operator*=(T2 x);
     Matrix<T>& operator+=(const Matrix<T>& b);
     std::vector<T> solve(std::vector<T> b) const;
 
@@ -183,8 +184,10 @@ void Matrix<T>::print() const
 }
 
 template<typename T>
-Matrix<T>& Matrix<T>::operator*=(double x)
+template<typename T2>
+Matrix<T>& Matrix<T>::operator*=(T2 x)
 {
+	//T tx(x);
     for (int i = 0; i < numRows; ++i)
         for (int j = 0; j < numCols; ++j)
             entries[i][j] *= x;
@@ -210,17 +213,17 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& x)
 template<typename T>
 std::vector<T> Matrix<T>::solve(std::vector<T> b) const
 {
-    std::vector<std::vector<double> > a(entries);
+    std::vector<std::vector<T> > a(entries);
     for (int m = 0; m < numRows-1; ++m)
         for (int i = m+1; i < numRows; ++i)
         {
-            double q = a[i][m]/a[m][m];
+            T q = a[i][m]/a[m][m];
             a[i][m] = 0.;
             for (int j= m+1; j < numRows; ++j)
                 a[i][j] = a[i][j] - q * a[m][j];
             b[i] -= q*b[m];
         }
-    std::vector<double> x(b);
+    std::vector<T> x(b);
     x.back() /= a[numRows-1][numRows-1];
     for (int i = numRows-2; i >= 0; --i)
     {
@@ -232,25 +235,25 @@ std::vector<T> Matrix<T>::solve(std::vector<T> b) const
 }
 
 
-template<typename T>
-Matrix<T> operator*(const Matrix<T>& a, double x)
+template<typename T, typename T2>
+Matrix<T> operator*(const Matrix<T>& a, T2 x)
 {
     Matrix<T> output(a);
     output *= x;
     return output;
 }
 
-template<typename T>
-Matrix<T> operator*(double x, const Matrix<T>& a)
+template<typename T, typename T2>
+Matrix<T> operator*(T2 x, const Matrix<T>& a)
 {
     Matrix<T> output(a);
     output *= x;
     return output;
 }
 
-template<typename T>
-std::vector<double> operator*(const Matrix<T>& a,
-                              const std::vector<double>& x)
+template<typename T, typename T2>
+std::vector<T2> operator*(const Matrix<T>& a,
+                              const std::vector<T2>& x)
 {
     if (x.size() != a.cols())
     {
@@ -259,7 +262,7 @@ std::vector<double> operator*(const Matrix<T>& a,
         std::cerr << std::endl;
         exit(EXIT_FAILURE);
     }
-    std::vector<double> y(a.rows());
+    std::vector<T2> y(a.rows());
     for (int i = 0; i < a.rows(); ++i)
     {
         y[i] = 0.;
