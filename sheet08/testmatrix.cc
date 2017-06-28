@@ -25,7 +25,34 @@ int main()
     A.print();
     B.print();
 
+    Matrix<double> C(A);
+	A = 2 * C;
+	A.print();
+	A = C * 2.;
+	A.print();
+	A = C + A;
+	A.print();
+	const Matrix<double> D(A);
+	std::cout << "Element 1,1 of D is " << D(1,1) << std::endl;
+	std::cout << std::endl;
+	A.resize(5,5,0.);
+	for (int i = 0; i < A.rows(); ++i)
+		A(i,i) = 2.;
+	for (int i = 0; i < A.rows()-1; ++i)
+		A(i+1,i) = A(i,i+1) = -1.;
+	// define vector b
+	std::vector<int> b(5);
+	b[0] = b[4] = 5.;
+	b[1] = b[3] = -4.;
+	b[2] = 4.;
+	std::vector<int>x = A * b;
+	std::cout << "A*b = ( ";
+	for (size_t i = 0; i < x.size(); ++i)
+		std::cout << x[i] << "  ";
+	std::cout << ")" << std::endl;
+	std::cout << std::endl;
 
+/*
     Matrix<double> C(A);
     A = 2 * C;
     A.print();
@@ -59,7 +86,7 @@ int main()
     for (size_t i = 0; i < x.size(); ++i)
         std::cout << x[i] << "  ";
     std::cout << ")" << std::endl;
-
+*/
 
 
     /*** FLOAT ***/
@@ -73,7 +100,6 @@ int main()
 		fA[i+1][i] = fA[i][i+1] = -1.;
 	// print matrix
 	fA.print();
-
 
 	/*** INTEGER ***/
 	std::cout << "Testing data type INTEGER:" << std::endl;
@@ -100,9 +126,42 @@ int main()
 		cA[i+1][i] = cA[i][i+1] = -1.;
 	// print matrix
 	cA.print();
+/*
+	Matrix<complex> cC(cA);
+	cA = 2 * cC;
+	cA.print();
+	cA = cC * 2.;
+	cA.print();
+	cA = cC + cA;
+	cA.print();
+	const Matrix<complex> cD(cA);
+	std::cout << "Element 1,1 of D is " << cD(1,1) << std::endl;
+	std::cout << std::endl;
+	cA.resize(5,5,0.);
+	for (int i = 0; i < cA.rows(); ++i)
+		cA(i,i) = 2.;
+	for (int i = 0; i < cA.rows()-1; ++i)
+		cA(i+1,i) = cA(i,i+1) = -1.;
 
-
-
+	// define vector b
+	std::vector<complex> cb(5);
+	cb[0] = cb[4] = 5.;
+	cb[1] = cb[3] = -4.;
+	cb[2] = 4.;
+	std::vector<complex>cx = cA * cb;
+	std::cout << "A*b = ( ";
+	for (size_t i = 0; i < cx.size(); ++i)
+		std::cout << cx[i] << "  ";
+	std::cout << ")" << std::endl;
+	std::cout << std::endl;
+	// solve
+	cx = cA.solve(cb);
+	cA.print();
+	std::cout << "The solution with the ordinary Gauss Elimination is: ( ";
+	for (size_t i = 0; i < cx.size(); ++i)
+		std::cout << cx[i] << "  ";
+	std::cout << ")" << std::endl;
+*/
 
 	/*** RATIONAL ***/
 	std::cout << "Testing data type RATIONAL:" << std::endl;
@@ -114,6 +173,8 @@ int main()
 		rA[i+1][i] = rA[i][i+1] = Rational(-1);
 	// print matrix
 	rA.print();
+
+
 
 
 }
