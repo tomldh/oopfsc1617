@@ -6,103 +6,123 @@
 template<typename T>
 class Matrix
 {
+
 public:
-	class ColIterator
-	{
-	public:
-		ColIterator() {};
-		ColIterator(typename std::vector<T>::iterator it_)
-		{
-			this->it = it_;
-		}
-		ColIterator& operator++(int j) //move to next entry
-		{
-			it++;
-			return (*this);
-		}
-		bool operator==(const ColIterator &rhs) const //comparison of iterators
-		{
-			return (it == rhs.it);
-		}
-		T& operator *() //access to current entry
-		{
-			return (*it);
-		};
-		const T& operator *() const; //as above, but const
-		unsigned int col() const; //number of current entry
-
-
-		typename std::vector<T>::iterator it;
-
-	};
 
 	class Row
 	{
 	public:
+
+		class ColIterator
+		{
+		private:
+			//ColIterator() {};
+			ColIterator(typename std::vector<T>::iterator it_, size_t index_)
+			{
+				it = it_;
+				index = index_;
+			}
+
+		public:
+			ColIterator& operator++(int i) //move to next entry
+			{
+				it++;
+				index++;
+				return (*this);
+			}
+			bool operator==(const ColIterator &rhs) const //comparison of iterators
+			{
+				return (it == rhs.it);
+			}
+			T& operator *() //access to current entry
+			{
+				return (*it);
+			};
+			const T& operator *() const //as above, but const
+			{
+				return (*it);
+			}
+			unsigned int col() const //number of current entry
+			{
+				return index;
+			}
+
+		private:
+			typename std::vector<T>::iterator it;
+			size_t index;
+
+			friend class Row;
+
+		};
+
+	//private:
 		Row() {};
 		Row(size_t n)
 		{
-			rowEntries.resize(n);
-
-			cbiter = ColIterator(rowEntries.begin());
-			ceiter = ColIterator(rowEntries.end());
+			entries.resize(n);
 		}
+	public:
 		ColIterator begin()
 		{
-			return cbiter;
+			return ColIterator(entries.begin(), 0);
 		};
 		ColIterator end()
 		{
-			return ceiter;
+			return ColIterator(entries.end(), entries.size());
 		};
-		ColIterator cbiter, ceiter;
-		std::vector<T> rowEntries;
+		std::vector<T> entries;
 
-		friend class Matrix;
+		//friend class std::vector;
+		friend class Matrix<T>;
+		friend class RowIterator;
 	};
 
 	class RowIterator
 	{
-	public:
-		RowIterator() {};
-		RowIterator(typename std::vector<Row>::iterator it_ )
+	private:
+		//RowIterator() {};
+		RowIterator(typename std::vector<Row>::iterator it_, size_t index_)
 		{
 			it = it_;
+			index = index_;
 		};
-		RowIterator& operator++(int i) //move to next row
+	public:
+		RowIterator& operator++(int j) //move to next row
 		{
 			it++;
+			index++;
 			return (*this);
 		}
 		bool operator==(const RowIterator& rhs) const //comparison of iterators
 		{
-			return (this->it == rhs.it);
+			return (it == rhs.it);
 		}
 		Row& operator *() //access to current row
 		{
-			return *it;
+			return (*it);
 		};
 		const Row& operator *() const; //as above, but const
 		unsigned int row() const; //number of current row
 
 	private:
 		typename std::vector<Row>::iterator it;
-	};
+		size_t index;
 
+		friend class Matrix<T>;
+	};
 
 
 public:
 	RowIterator begin()
 	{
-		return rbiter;
+		return RowIterator(vrows.begin(), 0);
 	};
 	RowIterator end()
 	{
-		return reiter;
+		return RowIterator(vrows.end(), vrows.size());
 	};
 
 private:
-	RowIterator rbiter, reiter;
 	std::vector<Row> vrows;
 
   public:
@@ -142,13 +162,6 @@ private:
 
         for (int i = 0; i < numRows_; i++)
         	vrows[i].resize(numCols_);
-
-        //rbiter = new RowIterator(vrows.begin());
-        //reiter = new RowIterator(vrows.end());
-
-
-
-
     };
     
     Matrix(int dim) : Matrix(dim,dim)
@@ -229,13 +242,11 @@ void Matrix<T>::resize(int numRows_, int numCols_, T value)
     numCols = numCols_;
 
     vrows.resize(numRows_);
-    rbiter = RowIterator(vrows.begin());
-    reiter = RowIterator(vrows.end());
     for (size_t i = 0; i < vrows.size(); i++)
     {
     	vrows[i] = Row(numCols_);
 
-    	for (Matrix::ColIterator cit = vrows[i].begin(); !(cit == vrows[i].end()); cit++)
+    	for (typename Matrix::Row::ColIterator cit = vrows[i].begin(); !(cit == vrows[i].end()); cit++)
     	{
     		(*cit) = value;
     	}

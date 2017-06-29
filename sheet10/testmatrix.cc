@@ -17,12 +17,16 @@ int main()
     Matrix<double> A(4,6,2.);
 
     typedef Matrix<double>::RowIterator MatRIter;
-    typedef Matrix<double>::ColIterator MatCIter;
+    typedef Matrix<double>::Row::ColIterator MatCIter;
+    //typedef Matrix<double>::ColIterator MatCIter;
     for (MatRIter i = A.begin(); !(i == A.end()); i++)
     {
     	for (MatCIter j = (*i).begin(); !(j == (*i).end()); j++)
     	{
     		(*j) = 3;
+
+    		if (j.col() == 2)
+    			(*j) = 2.5;
     		std::cout << (*j) << " ";
     	}
     	std::cout << std::endl;
