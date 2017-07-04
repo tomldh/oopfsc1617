@@ -8,60 +8,104 @@ class Matrix
 {
 
 public:
+	class Row;
+
+	class ColIterator
+	{
+	private:
+		//ColIterator() {};
+		ColIterator(typename std::vector<T>::iterator it_, size_t index_)
+		{
+			it = it_;
+			index = index_;
+		}
+
+	public:
+		ColIterator& operator++(int i) //move to next entry
+		{
+			it++;
+			index++;
+			return (*this);
+		}
+		bool operator==(const ColIterator &rhs) const //comparison of iterators
+		{
+			return (it == rhs.it);
+		}
+		bool operator!=(const ColIterator &rhs) const //comparison of iterators
+		{
+			return (it != rhs.it);
+		}
+		T& operator *() //access to current entry
+		{
+			return (*it);
+		};
+		const T& operator *() const //as above, but const
+		{
+			return (*it);
+		}
+		unsigned int col() const //number of current entry
+		{
+			return index;
+		}
+
+	private:
+		typename std::vector<T>::iterator it;
+		size_t index;
+
+		friend class Row;
+
+	};
+
+	class ColIteratorConst
+	{
+	private:
+		//ColIteratorConst() {};
+		ColIteratorConst(typename std::vector<T>::const_iterator it_, size_t index_)
+		{
+			it = it_;
+			index = index_;
+		}
+
+	public:
+		ColIteratorConst& operator++(int i) //move to next entry
+		{
+			it++;
+			index++;
+			return (*this);
+		}
+		bool operator==(const ColIteratorConst &rhs) const //comparison of iterators
+		{
+			return (it == rhs.it);
+		}
+		bool operator!=(const ColIteratorConst &rhs) const //comparison of iterators
+		{
+			return (it != rhs.it);
+		}
+		const T& operator *() const //as above, but const
+		{
+			return (*it);
+		}
+		unsigned int col() const //number of current entry
+		{
+			return index;
+		}
+
+	private:
+		typename std::vector<T>::const_iterator it;
+		size_t index;
+
+		friend class Row;
+
+	};
 
 	class Row
 	{
 	public:
-
-		class ColIterator
-		{
-		private:
-			//ColIterator() {};
-			ColIterator(typename std::vector<T>::iterator it_, size_t index_)
-			{
-				it = it_;
-				index = index_;
-			}
-
-		public:
-			ColIterator& operator++(int i) //move to next entry
-			{
-				it++;
-				index++;
-				return (*this);
-			}
-			bool operator==(const ColIterator &rhs) const //comparison of iterators
-			{
-				return (it == rhs.it);
-			}
-			T& operator *() //access to current entry
-			{
-				return (*it);
-			};
-			const T& operator *() const //as above, but const
-			{
-				return (*it);
-			}
-			unsigned int col() const //number of current entry
-			{
-				return index;
-			}
-
-		private:
-			typename std::vector<T>::iterator it;
-			size_t index;
-
-			friend class Row;
-
-		};
-
-	//private:
 		Row() {};
 		Row(size_t n)
 		{
 			entries.resize(n);
 		}
-	public:
 		ColIterator begin()
 		{
 			return ColIterator(entries.begin(), 0);
@@ -70,11 +114,52 @@ public:
 		{
 			return ColIterator(entries.end(), entries.size());
 		};
-		std::vector<T> entries;
 
-		//friend class std::vector;
-		friend class Matrix<T>;
-		friend class RowIterator;
+		ColIteratorConst begin() const
+		{
+			return ColIteratorConst(entries.cbegin(), 0);
+		};
+		ColIteratorConst end() const
+		{
+			return ColIteratorConst(entries.cend(), entries.size());
+		};
+
+		T& operator[](int i)
+		{
+			if (i < 0 || i >= (int)entries.size())
+			{
+				std::cerr << "Illegal col index " << i;
+				std::cerr << " valid range is [0:" << entries.size()-1 << "]";
+				std::cerr << std::endl;
+				exit(EXIT_FAILURE);
+			}
+			return entries[i];
+		}
+		const T& operator[](int i) const
+		{
+		    if (i < 0 || i >= (int)entries.size())
+		    {
+		        std::cerr << "Illegal col index " << i;
+		        std::cerr << " valid range is [0:" << entries.size()-1 << "]";
+		        std::cerr << std::endl;
+		        exit(EXIT_FAILURE);
+		    }
+		    return entries[i];
+		}
+
+		size_t size()
+		{
+			return entries.size();
+		};
+
+		void resize(size_t n)
+		{
+			entries.resize(n);
+		};
+
+
+	private:
+		std::vector<T> entries;
 	};
 
 	class RowIterator
@@ -97,15 +182,65 @@ public:
 		{
 			return (it == rhs.it);
 		}
+		bool operator!=(const RowIterator& rhs) const //comparison of iterators
+		{
+			return (it != rhs.it);
+		}
 		Row& operator *() //access to current row
 		{
 			return (*it);
 		};
-		const Row& operator *() const; //as above, but const
-		unsigned int row() const; //number of current row
+		const Row& operator *() const //as above, but const
+		{
+			return (*it);
+		};
+		unsigned int row() const //number of current row
+		{
+			return index;
+		}
 
 	private:
 		typename std::vector<Row>::iterator it;
+		size_t index;
+
+		friend class Matrix<T>;
+	};
+
+	class RowIteratorConst
+	{
+	private:
+		//RowIteratorConst() {};
+		RowIteratorConst(typename std::vector<Row>::const_iterator it_, size_t index_)
+		{
+			it = it_;
+			index = index_;
+		};
+	public:
+		RowIteratorConst& operator++(int j) //move to next row
+		{
+			it++;
+			index++;
+			return (*this);
+		}
+		bool operator==(const RowIteratorConst& rhs) const //comparison of iterators
+		{
+			return (it == rhs.it);
+		}
+		bool operator!=(const RowIteratorConst& rhs) const //comparison of iterators
+		{
+			return (it != rhs.it);
+		}
+		const Row& operator *() const //as above, but const
+		{
+			return (*it);
+		};
+		unsigned int row() const //number of current row
+		{
+			return index;
+		}
+
+	private:
+		typename std::vector<Row>::const_iterator it;
 		size_t index;
 
 		friend class Matrix<T>;
@@ -115,15 +250,24 @@ public:
 public:
 	RowIterator begin()
 	{
-		return RowIterator(vrows.begin(), 0);
-	};
-	RowIterator end()
-	{
-		return RowIterator(vrows.end(), vrows.size());
+		return RowIterator(entries.begin(), 0);
 	};
 
-private:
-	std::vector<Row> vrows;
+	RowIterator end()
+	{
+		return RowIterator(entries.end(), entries.size());
+	};
+
+	RowIteratorConst begin() const
+	{
+		return RowIteratorConst(entries.cbegin(), 0);
+	};
+
+	RowIteratorConst end() const
+	{
+		return RowIteratorConst(entries.cend(), entries.size());
+	};
+
 
   public:
     void resize(int numRows_, int numCols_);
@@ -131,8 +275,8 @@ private:
     // access elements
     T& operator()(int i, int j);
     T  operator()(int i, int j) const;
-    std::vector<T>& operator[](int i);
-    const std::vector<T>& operator[](int i) const;
+    Row& operator[](int i);
+    const Row& operator[](int i) const;
 
     Matrix<T>& operator+=(const Matrix<T>& b);
     
@@ -155,13 +299,10 @@ private:
     }
     
     Matrix(int numRows_, int numCols_) :
-            entries(numRows_), numRows(numRows_), numCols(numCols_), vrows(numRows_)
+            entries(numRows_), numRows(numRows_), numCols(numCols_)
     {
         for (int i = 0; i < numRows_; ++i)
             entries[i].resize(numCols_);
-
-        for (int i = 0; i < numRows_; i++)
-        	vrows[i].resize(numCols_);
     };
     
     Matrix(int dim) : Matrix(dim,dim)
@@ -172,7 +313,7 @@ private:
         resize(numRows_,numCols_,value);
     };
     
-    Matrix(std::vector<std::vector<T> > a)
+    Matrix(std::vector<Row> a)
     {
         entries = a;
         numRows = a.size();
@@ -194,7 +335,8 @@ private:
     Matrix<T>& operator*=(T2 value);
 
   private:
-    std::vector<std::vector<T> > entries;
+    //std::vector<std::vector<T> > entries;
+  	std::vector<Row> entries;
     int numRows = 0;
     int numCols = 0;
 
@@ -223,7 +365,8 @@ void Matrix<T>::resize(int numRows_, int numCols_)
 {
     entries.resize(numRows_);
     for (size_t i = 0; i < entries.size(); ++i)
-        entries[i].resize(numCols_);
+        //entries[i].resize(numCols_);
+    	entries[i].resize(numCols_);
     numRows = numRows_;
     numCols = numCols_;
 }
@@ -235,22 +378,14 @@ void Matrix<T>::resize(int numRows_, int numCols_, T value)
     for (size_t i = 0; i < entries.size(); ++i)
     {
         entries[i].resize(numCols_);
-        for (size_t j = 0; j < entries[i].size(); ++j)
-            entries[i][j] = value;
+
+        for (ColIterator cit = entries[i].begin(); cit != entries[i].end(); cit++)
+		{
+			(*cit) = value;
+		}
     }
     numRows = numRows_;
     numCols = numCols_;
-
-    vrows.resize(numRows_);
-    for (size_t i = 0; i < vrows.size(); i++)
-    {
-    	vrows[i] = Row(numCols_);
-
-    	for (typename Matrix::Row::ColIterator cit = vrows[i].begin(); !(cit == vrows[i].end()); cit++)
-    	{
-    		(*cit) = value;
-    	}
-    }
 }
 
 template<typename T>
@@ -294,7 +429,7 @@ T Matrix<T>::operator()(int i, int j) const
 }
 
 template<typename T>
-std::vector<T>& Matrix<T>::operator[](int i)
+typename Matrix<T>::Row& Matrix<T>::operator[](int i)
 {
     if (i < 0 || i >= numRows)
     {
@@ -306,8 +441,9 @@ std::vector<T>& Matrix<T>::operator[](int i)
     return entries[i];
 }
 
-template<typename T>
-const std::vector<T>& Matrix<T>::operator[](int i) const
+
+template <typename T>
+const typename Matrix<T>::Row& Matrix<T>::operator[](int i) const
 {
     if (i < 0 || i >= numRows)
     {
@@ -329,9 +465,12 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& rhs)
                   << rhs.numRows << "x" << rhs.numCols << ") do not match!";
         exit(EXIT_FAILURE);
     }
-    for (int i = 0; i < numRows; ++i)
-        for (int j = 0;j < numCols; ++j)
-            entries[i][j] += rhs[i][j];
+    for (RowIterator i = begin(); i != end(); i++)
+    {
+    	for (ColIterator j = (*i).begin(); j != (*i).end(); j++)
+    		(*j) += rhs[i.row()][j.col()];
+    }
+
     return *this;	
 }
 
@@ -341,11 +480,11 @@ void Matrix<T>::print() const
 {
     std::cout << "(" << numRows << "x";
     std::cout << numCols << ") matrix:" << std::endl;
-    for (int i = 0; i < numRows; ++i)
+    for (RowIteratorConst i = begin(); i != end(); i++)
     {
         std::cout << std::setprecision(3);
-        for (int j = 0; j < numCols; ++j)
-            std::cout << std::setw(5) << entries[i][j] << " ";
+        for (ColIteratorConst j = (*i).begin(); j != (*i).end(); j++)
+            std::cout << std::setw(5) << (*j) << " ";
         std::cout << std::endl;
     }
     std::cout << std::endl;
@@ -356,13 +495,12 @@ template<typename T>
 template<typename T2>
 Matrix<T>& Matrix<T>::operator*=(T2 value)
 {
-    for (int i = 0; i < numRows; i++)
-    {
-        for (int j = 0; j < numCols; j++)
-        {
-            entries[i][j] *= value;
-        };
-    };
+	for (RowIterator i = begin(); i != end(); i++)
+	{
+		for (ColIterator j = (*i).begin(); j != (*i).end(); j++)
+			(*j) *= value;
+	}
+
     return *this;
 };
 
@@ -414,6 +552,7 @@ Matrix<T> operator+(const Matrix<T>& a, const Matrix<T>& b)
     return result;
 };
 
+
 //Template for vector multiplication
 template<typename T, typename T2>
 std::vector<T2> operator*(const Matrix<T>& a, const std::vector<T2>& x)
@@ -425,6 +564,7 @@ std::vector<T2> operator*(const Matrix<T>& a, const std::vector<T2>& x)
         std::cerr << std::endl;
         exit(EXIT_FAILURE);
     };
+
     std::vector<T> y(a.rows());
     for (int i = 0; i < a.rows(); ++i)
     {
@@ -432,5 +572,7 @@ std::vector<T2> operator*(const Matrix<T>& a, const std::vector<T2>& x)
         for (int j = 0; j < a.cols(); ++j)
             y[i] += a[i][j] * x[j];
     };
+
     return y;
 };
+

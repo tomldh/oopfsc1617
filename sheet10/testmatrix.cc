@@ -14,26 +14,7 @@ int main()
 	std::cout << "Testing data type DOUBLE:" << std::endl;
 	std::cout << "-------------------------" << std::endl;
 	// define matrix
-    Matrix<double> A(4,6,2.);
-
-    typedef Matrix<double>::RowIterator MatRIter;
-    typedef Matrix<double>::Row::ColIterator MatCIter;
-    //typedef Matrix<double>::ColIterator MatCIter;
-    for (MatRIter i = A.begin(); !(i == A.end()); i++)
-    {
-    	for (MatCIter j = (*i).begin(); !(j == (*i).end()); j++)
-    	{
-    		(*j) = 3;
-
-    		if (j.col() == 2)
-    			(*j) = 2.5;
-    		std::cout << (*j) << " ";
-    	}
-    	std::cout << std::endl;
-    }
-
-    exit(0);
-
+    Matrix<double> A(4,6,0.);
     for (int i = 0; i < A.rows(); ++i)  
         A[i][i] = 2.;
     for (int i=0; i < A.rows()-1; ++i) 
@@ -195,7 +176,6 @@ int main()
     std::cout << "]" << std::endl << std::endl;
     
 	/*** COMPLEX ***/
-    /*
 	std::cout << "Testing data type COMPLEX:" << std::endl;
 	std::cout << "-------------------------" << std::endl;
     // define matrix
@@ -247,9 +227,8 @@ int main()
         std::cout << cv2[i] << ' ';
     };
     std::cout << "]" << std::endl << std::endl;
-*/
+
 	/*** RATIONAL ***/
-    /*
 	std::cout << "Testing data type RATIONAL:" << std::endl;
 	std::cout << "-------------------------" << std::endl;
     Matrix<Rational> rA(4,6,Rational(0));
@@ -300,5 +279,4 @@ int main()
         std::cout << rv2[i] << ' ';
     };
     std::cout << "]" << std::endl << std::endl;
-    */
 }
