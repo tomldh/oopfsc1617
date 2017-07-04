@@ -2,8 +2,8 @@ Exercise 1 STL Container Types
 
 1. Array/Vector, as the indices of the nodes are sequential and the total size of the grid does not change. There's also no removal of nodes involved.
 
-2. Stack/deque for storin pivot elements, as the size is dynamic and the pivots need to be retrieved/removed in the order by which they are inserted.
-Array for data elements, as the number of the data elements does not change and the data follows certain sequential order.
+2. Stack/deque for storing pivot elements, as the pivot elements need to be retrieved/removed from the container in certain order(FILO/FIFO). Also, the number of the elements in the container is dynamic. 
+Vector/array for data elements, as the number of the data elements does not change and sorting only involves swapping data elements by direct indexing. Also, the data elements follows certain sequential order after sorting.
 
 3. Deque, as it has FIFO mechanism.
 
