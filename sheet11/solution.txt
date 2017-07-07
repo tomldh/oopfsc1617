@@ -1,0 +1,35 @@
+Exercise 1 STL Algorithms: Vector Norm
+
+1. 
+L2 norm:
+use inner_product(b,e,b2,i) first and then square root.
+
+if container may be modified, use for_each(b,e,f) with f as funtor object which applies sqaure operation, then apply accumulate(b,e,i). Lastly, sqaure root.
+
+L1 norm:
+use accumulate(b,e,i,f), with f as a functor object which sums up the absolute value of the operands.
+
+if container may be modified, use for_each(b,e,f) with f as a functor object which applies absolute operation, then apply accumulate(b,e,i).
+
+Infinity norm:
+use max_element(b,e,f), with f as a functor object which compares the absolute value of the operands.
+
+if container may be modified, use for_each(b,e,f) with f as a functor object which applies absolute operation, then apply sort(b,e)
+
+2.
+Similarity:
+	1. Need to iterate all elements to calculate the norm
+	2. Need to return the result value
+
+Difference:
+	1. Different norms have different formula
+	2. If the element value is negative, need to take absolute first. No need for positive element value.
+
+Possible interface:
+	virtual double operator() (Iterator first, Iterator last)
+
+Dynamic polymorphism is used to take care of different norms.
+Static polymorphism is used to take care of different element datatypes.
+Template specialization is used to take care of speed-up performance on specific datatype(e.g. unsigned int) in some norm calculations.
+
+Refer to main.cc for implementation.
