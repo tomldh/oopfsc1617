@@ -477,9 +477,9 @@ class SparseMatrix
     		}
 
     		// fill sparse matrix with given arguments
-    		data = data_;
-    		column = column_;
-    		rowOffset = rowOffset_;
+    		std::copy(data_.begin(), data_.end(), data.begin());//data = data_;
+    		std::copy(column_.begin(), column_.end(), column.begin()); //column = column_;
+    		std::copy(rowOffset_.begin(), rowOffset_.end(), rowOffset.begin()); //rowOffset = rowOffset_;
 
     		for (unsigned int i = 0; i < rowOffset.size()-1; i++)
     		{
@@ -529,8 +529,8 @@ class SparseMatrix
 };
 
 //Template for vector multiplication
-template<typename T, typename T2>
-std::vector<T2> operator*(const SparseMatrix<T>& a, const std::vector<T2>& x)
+template<typename T1, typename T2>
+std::vector<T2> operator*(const SparseMatrix<T1>& a, const std::vector<T2>& x)
 {
     if (x.size() != unsigned(a.cols()))
     {
@@ -541,11 +541,11 @@ std::vector<T2> operator*(const SparseMatrix<T>& a, const std::vector<T2>& x)
     };
 
     std::vector<T2> y(a.rows());
-    for(typename SparseMatrix<T>::RowIteratorConst it = a.begin(); it != a.end(); ++it)
+    for(typename SparseMatrix<T1>::RowIteratorConst it = a.begin(); it != a.end(); ++it)
 	{
     	y[it.row()] = 0.;
 
-		for (typename SparseMatrix<T>::ColIteratorConst cit = (*it).begin(); cit != (*it).end(); ++cit)
+		for (typename SparseMatrix<T1>::ColIteratorConst cit = (*it).begin(); cit != (*it).end(); ++cit)
 		{
 			y[it.row()] += (*cit) * x[cit.col()];
 		}

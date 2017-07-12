@@ -443,6 +443,8 @@ class Matrix
     
     void crs(std::vector<T>& data, std::vector<unsigned int>& columns, std::vector<unsigned int>& rowOffset) const
     {
+
+
     	data.resize(0);
     	columns.resize(0);
     	rowOffset.resize(0);
@@ -468,49 +470,60 @@ class Matrix
 			}
 		}
 
-    	for (unsigned int i = 0; i < data.size(); i++)
+    	if (rowOffset.size() < 10)
     	{
-    		std::cout << data[i] << " ";
+    		std::cout << "Convert dense to sparse >>>>>>>>" << std::endl;
+
+			for (unsigned int i = 0; i < data.size(); i++)
+			{
+				std::cout << data[i] << " ";
+			}
+			std::cout << std::endl;
+
+			for (unsigned int i = 0; i < columns.size(); i++)
+			{
+				std::cout << columns[i] << " ";
+			}
+			std::cout << std::endl;
+
+			for (unsigned int i = 0; i < rowOffset.size(); i++)
+			{
+				std::cout << rowOffset[i] << " ";
+			}
+			std::cout << std::endl << data.size() << " " << columns.size() << " " << rowOffset.size() << std::endl;
+			std::cout << "<<<<<<<<<<<<<<<<<<" << std::endl;
     	}
-    	std::cout << std::endl;
-
-    	for (unsigned int i = 0; i < columns.size(); i++)
-		{
-			std::cout << columns[i] << " ";
-		}
-		std::cout << std::endl;
-
-		for (unsigned int i = 0; i < rowOffset.size(); i++)
-		{
-			std::cout << rowOffset[i] << " ";
-		}
-		std::cout << std::endl << data.size() << " " << columns.size() << " " << rowOffset.size();
     }
 
   private:
     std::vector<Row> entries;
 };
 
-template<typename T>
-std::vector<T> operator*(const Matrix<T>& a, const std::vector<T>& x)
+//Template for vector multiplication
+template<typename T1, typename T2>
+std::vector<T2> operator*(const Matrix<T1>& a, const std::vector<T2>& x)
 {
-    if (x.size() != a.cols())
+    if (x.size() != unsigned(a.cols()))
     {
         std::cerr << "Dimensions of vector " << x.size();
         std::cerr << " and matrix " << a.cols() << " do not match!";
         std::cerr << std::endl;
         exit(EXIT_FAILURE);
-    }
-    
-    typename Matrix<T>::Row y(a.rows());
-    for (typename Matrix<T>::Row::ColIterator cit = y.begin(); cit != y.end(); ++cit)//size_t i = 0; i < a.rows(); ++i)
-    {
-        *cit = 0.;
-        for (size_t j = 0; j < a.cols(); ++j)
-            *cit += a[cit.col()][j] * x[j];
-    }
+    };
+
+    std::vector<T2> y(a.rows());
+    for(typename Matrix<T1>::RowIteratorConst it = a.begin(); it != a.end(); ++it)
+	{
+    	y[it.row()] = 0.;
+
+		for (typename Matrix<T1>::ColIteratorConst cit = (*it).begin(); cit != (*it).end(); ++cit)
+		{
+			y[it.row()] += (*cit) * x[cit.col()];
+		}
+	}
+
     return y;
-}
+};
 
 template<typename T, typename T_>
 Matrix<T> operator*(const Matrix<T>& a, T_ x)
