@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include "matrix.h"
 
 
 template <class T>
@@ -126,6 +127,42 @@ double frobeniusnorm(const M& matrix)
 	return std::sqrt(sum);
 }
 
+template<class M, class T>
+void gaussSeidel(const M& A, const std::vector<T>& b, std::vector<T>& x, int maxIter)
+{
+    // initialize x with zero values
+    std::fill(x.begin(), x.end(), 0);
+
+    while(maxIter--)
+    {
+        for (typename M::RowIteratorConst riter = A.begin(); riter != A.end(); riter++)
+        {
+            unsigned int k = riter.row(); //row index
+
+            T sum = 0;
+            T a_kk = 1;
+
+            for (typename M::ColIteratorConst citer = (*riter).begin(); citer != (*riter).end(); citer++)
+            {
+                unsigned int i = citer.col(); // col index
+
+                if (k == i)
+                {
+                    a_kk = (*citer);
+                }
+                else
+                {
+                    sum += (*citer) * x[i];
+                }
+            }
+            x[k] = (b[k] - sum) / a_kk;
+        }
+
+        //std::cout << "iteration " << m << " " << x[0] << " " << x[1] << " " << x[2] << std::endl;
+    }
+
+}
+
 int main()
 {
 
@@ -171,6 +208,21 @@ int main()
 	InfNorm<std::vector<int>> infnorm1;
 	double infRes1 = infnorm1(v1.begin(), v1.end());
 	std::cout << "\tResult of infinity norm is: " << infRes1 << std::endl;
+
+	Matrix<double> A(3,3,0.);
+
+	A[0][0] = 2; A[0][1] = 1; A[0][2] = 0;
+	A[1][0] = 1; A[1][1] = 3; A[1][2] = 2;
+	A[2][0] = 0; A[2][1] = 1; A[2][2] = -4;
+
+	std::vector<double> x{1,1,1};
+	std::vector<double> b{1,2,3};
+
+	gaussSeidel<Matrix<double>, double>(A, b, x, 2);
+
+	std::cout << x[0] << " " << x[1] << " " << x[2] << std::endl;
+
+	A.print();
 
 	/*
 
