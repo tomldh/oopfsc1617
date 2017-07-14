@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 class Node
 {
@@ -12,18 +13,19 @@ public:
 	int value;
 
 private:
-	Node* prev;
-	Node* next;
+	//std::shared_ptr<Node> prev;
+	std::shared_ptr<Node> prev;
+	std::shared_ptr<Node> next;
 
 	friend class List;
 };
 
-Node::Node():value(0), prev(0), next(0)
+Node::Node():value(0), prev(std::shared_ptr<Node>(nullptr)), next(std::shared_ptr<Node>(nullptr))
 {
 
 }
 
-Node::Node(int val):value(val), prev(0), next(0)
+Node::Node(int val):value(val), prev(std::shared_ptr<Node>(nullptr)), next(std::shared_ptr<Node>(nullptr))
 {
 
 }
@@ -43,33 +45,35 @@ class List
 public:
 	List();
 	~List();
-	Node* first() const;
-	Node* next(const Node* n) const;
-	Node* previous(const Node* n) const;
+	std::shared_ptr<Node> first() const;
+	std::shared_ptr<Node> next(const std::shared_ptr<Node> n) const;
+	std::shared_ptr<Node> previous(const std::shared_ptr<Node> n) const;
 	void append(int i);
-	void insert(Node* n, int i);
-	void erase(Node* n);
+	void insert(std::shared_ptr<Node> n, int i);
+	void erase(std::shared_ptr<Node> n);
 
 private:
-	Node* head;
-	Node* tail;
+	std::shared_ptr<Node> head;
+	std::shared_ptr<Node> tail;
 
 };
 
-List::List(): head(0), tail(0)
+List::List(): head(nullptr), tail(nullptr)
 {
 
 }
 
 List::~List()
 {
+/*
 	// clear all nodes
-	Node *n;
+	std::shared_ptr<Node> n;
 
 	while(head)
 	{
 		n = head->next;
-		delete head;
+		head->prev = nullptr;
+		head->next = nullptr;
 		head = n;
 
 	}
@@ -84,22 +88,23 @@ List::~List()
 	{
 		tail = 0;
 	}
+*/
 }
 
 // return a pointer to the first entry
-Node* List::first() const
+std::shared_ptr<Node> List::first() const
 {
 	return head;
 }
 
 // return a pointer to the node after n
-Node* List::next(const Node* n) const
+std::shared_ptr<Node> List::next(const std::shared_ptr<Node> n) const
 {
 	return n->next;
 }
 
 // return a pointer to the node after n
-Node* List::previous(const Node* n) const
+std::shared_ptr<Node> List::previous(const std::shared_ptr<Node> n) const
 {
 	return n->prev;
 }
@@ -108,8 +113,7 @@ Node* List::previous(const Node* n) const
 void List::append(int i)
 {
 
-	Node *node = new Node();
-	node->value = i;
+	std::shared_ptr<Node> node = std::make_shared<Node>(i);
 
 	if (!head)
 	{
@@ -127,10 +131,10 @@ void List::append(int i)
 }
 
 // insert a value before n
-void List::insert(Node* n, int i)
+void List::insert(std::shared_ptr<Node> n, int i)
 {
 
-	Node *node = new Node(i);
+	std::shared_ptr<Node> node = std::make_shared<Node>(i);
 
 	if (n->prev)
 	{
@@ -152,7 +156,7 @@ void List::insert(Node* n, int i)
 }
 
 // remove n from the list
-void List::erase(Node* n)
+void List::erase(std::shared_ptr<Node> n)
 {
 
 	if(n->prev) //non-head
@@ -176,7 +180,9 @@ void List::erase(Node* n)
 			tail = n->prev;
 	}
 
-	delete n;
+	n->prev = nullptr;
+	n->next = nullptr;
+
 }
 
 
@@ -193,7 +199,7 @@ int main()
 
 	list.erase(list.first());
 
-	for (Node* n = list.first(); n != 0; n = list.next(n))
+	for (std::shared_ptr<Node> n = list.first(); n != 0; n = list.next(n))
 			std::cout << n->value << std::endl;
 
 	return 0;
