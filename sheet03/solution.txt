@@ -1,0 +1,22 @@
+Exercise 01
+
+Incorrect:
+&p == i
+
+
+Correct:
+i + 1 : int
+*p : int
+*p + 3 : int
+&i == p : bool
+i == *p : bool
+&p : int**
+p + 1 : int*
+**(&p) : int
+*p + i > i : bool
+
+Exercise 02
+
+Exercise 3.1:
+
+
