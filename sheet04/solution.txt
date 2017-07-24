@@ -1,3 +1,15 @@
+Exercise 2:
+When the list is deleted, the respective destructor for the member attributes will be called.
+With reference to the code, when head shared_ptr is going to be destroyed, if the node which head points to has no other shared_ptr pointing to it, it is going to be destroyed.
+When that node is being destroyed, the next shared_ptr in the node will be destroyed which might lead to deletion of the underlying node. 
+Such process continues until the end node of the list. Here we assume the above mentioned shared_ptr is the only pointer pointing to the node. 
+The control is then returned to the previous destructor of the node until the destructor of the head shared_ptr in the list.
+Next, the tail shared_ptr will be destroyed and the node that it points to will be deleted.
+
+When each element is pointing to its predecessor, the nodes are then pointed to each other due to "next" and "prev". 
+Thus, when the list is being destroyed, due to the node having one pointer in the cirle pointing to it, the node will not be destroyed even when list go out of scope.
+To break such circle, the predecessor pointer should be a weak_ptr which does not affect the release of the node memory but still can be used to point to what the shared_ptr points to. 
+
 Exercise 4:
 
 
