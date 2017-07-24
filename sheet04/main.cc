@@ -42,6 +42,7 @@ public:
 	List();
 	~List();
 	std::shared_ptr<Node> first() const;
+	std::shared_ptr<Node> last() const;
 	std::shared_ptr<Node> next(const std::shared_ptr<Node> n) const;
 	std::shared_ptr<Node> previous(const std::shared_ptr<Node> n) const;
 	void append(int i);
@@ -91,6 +92,12 @@ List::~List()
 std::shared_ptr<Node> List::first() const
 {
 	return head;
+}
+
+// return a pointer to the first entry
+std::shared_ptr<Node> List::last() const
+{
+	return tail;
 }
 
 // return a pointer to the node after n
@@ -191,9 +198,13 @@ int main()
 	list.insert(list.next(list.first()), 4);
 
 	list.erase(list.first());
-/*
+	std::shared_ptr<Node> n1 = list.next(list.first());
+
 	for (std::shared_ptr<Node> n = list.first(); n != 0; n = list.next(n))
 			std::cout << n->value << std::endl;
-*/
+
+	for (std::shared_ptr<Node> n = list.last(); n != 0; n = list.previous(n))
+				std::cout << n->value << std::endl;
+
 	return 0;
 }
